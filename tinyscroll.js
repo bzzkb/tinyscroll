@@ -101,7 +101,7 @@
                     that.preventDefault(event);
                     // 滚动到顶部的回调
                     that.$element.trigger({
-                        type: "scrollTop" 
+                        type: "scrollTop"
                     });
                     //console.log("到底部啦");
                 }
@@ -112,7 +112,7 @@
                     // 滚动到底部的回调
                     that.$element.trigge
                     that.$element.trigger({
-                        type: "scrollBottom" 
+                        type: "scrollBottom"
                     });
                     //console.log("到顶啦");
                 }
@@ -142,6 +142,8 @@
                 else {
                     $(doc).on("mousemove", $.proxy(that.fnMove, that)).on("mouseup", $.proxy(that.fnUp, that));
                 }
+                // update ，鼠标按下去的时候，就要让滚动条一直显示，知道松开的时候，才淡出，其实可以用添加移除class的方式来做，后续优化
+                that.$slider[0].classList.add("show");
                 //this.setCapture ? ( that.addDrag($(this)) , this.setCapture() ) : that.addDrag( $(doc) ); 
                 return false; // 防止文字选中
             });
@@ -168,7 +170,7 @@
                 that.calcTranslate();
             }).on("click", function (event) {
                 // 每次点击的时候，移动40px（70），仿微信pc客户端的
-                if(event.target===that.$slider[0]) {
+                if (event.target === that.$slider[0]) {
                     return;
                 }
                 var deltaTop = 70;
@@ -176,22 +178,43 @@
                 var offsetY = event.pageY - $(this).offset().top;// 待优化：$(this).offset().top 是可以缓存的
                 var direction = offsetY - that.sliderTop;
 
-                if (Math.abs(direction) > that.sliderHeight) {
-                    if (direction > 0) {
-                        sliderTop += deltaTop;
+//                if (Math.abs(direction) > that.sliderHeight) {
+//                    if (direction > 0) {
+//                        sliderTop += deltaTop;
+//                    }
+//                    else {
+//                        sliderTop -= deltaTop;
+//                    }
+//                    // 对pointY 进行最大最小纠正
+//                    sliderTop = Math.max(0, sliderTop);
+//                    sliderTop = Math.min(that.$content[0].clientHeight - that.sliderHeight, sliderTop);
+//                    that.sliderTop = sliderTop;
+//                }
+//                else {
+//                    that.sliderTop = direction < 0 ?  offsetY - that.sliderHeight/2 : offsetY - that.sliderHeight/2;
+//                }
+                //debugger;
+                if (direction < 0) {
+                    if (Math.abs(direction) < that.sliderHeight) {
+                        sliderTop = offsetY - that.sliderHeight / 2;
                     }
                     else {
                         sliderTop -= deltaTop;
                     }
-                    // 对pointY 进行最大最小纠正
-                    sliderTop = Math.max(0, sliderTop);
-                    sliderTop = Math.min(that.$content[0].clientHeight - that.sliderHeight, sliderTop);
-                    that.sliderTop = sliderTop;
                 }
                 else {
-                    that.sliderTop = offsetY - that.sliderHeight/2;
+                    if (Math.abs(direction) - that.sliderHeight < that.sliderHeight) {
+                        sliderTop = offsetY - that.sliderHeight / 2;
+                    }
+                    else {
+                        sliderTop += deltaTop;
+                    }
                 }
-                
+                // 对pointY 进行最大最小纠正
+                sliderTop = Math.max(0, sliderTop);
+                sliderTop = Math.min(that.$content[0].clientHeight - that.sliderHeight, sliderTop);
+                that.sliderTop = sliderTop;
+
                 that.$content[0].scrollTop = that.calcContentTop(that.sliderTop);
                 that.calcTranslate();
             });
@@ -228,24 +251,26 @@
             else {
                 $(doc).off("mousemove", this.fnMove).off("mouseup", this.fnUp);
             }
+            // 松开的时候，移除一直显示
+            this.$slider[0].classList.remove("show");
         },
         // 获取按下的点 的内部的值，这个值是固定的，用于后续，用pageY - downPointY 来算出top值
         getStartPoint: function (event) {
             //this.downPointY = event.pageY - this.$slider.offset().top;
             this.downPointY = event.pageY - this.$slider.position().top;
-        } ,
+        },
         // 可以指定位置，或者跳转到指定内部元素的位置
-        setTop: function(top){
+        setTop: function (top) {
             var that = this;
-            var $content =that.$content;
+            var $content = that.$content;
 
             top = typeof top === "number" ? top : $(top).position().top;
-            top = $content[0].scrollTop +top;
+            top = $content[0].scrollTop + top;
             $content[0].scrollTop = top;
-            $content.trigger("scroll",$.proxy(that.calcTranslate, that));
-        } ,
+            $content.trigger("scroll", $.proxy(that.calcTranslate, that));
+        },
         // 如果有新内容进来的时候，就用这个接口重新渲染
-        reset: function(){
+        reset: function () {
             // 1. 重设滚动条高度
             // 2. 让滚动条的top值为0
             this.sliderHeight = this.calcSliderHeight(this.$content[0], this.$slider[0]);
@@ -273,7 +298,7 @@
         return (that ? that : this);
     }
 
-$("[data-name="+PLUGIN_NAME+"]")[PLUGIN_NAME]();
+    $("[data-name=" + PLUGIN_NAME + "]")[PLUGIN_NAME]();
 
 })(jQuery, window, document, Math);
 
