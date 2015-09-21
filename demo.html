@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>自定义滚动条</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            * {padding:0;margin:0;}
+            .modal {
+                width: 200px;
+                height:500px;
+                background:#F2F2F2;
+                margin:50px auto;
+            }
+            
+            /*组件部分 开始*/
+            .tinyscroll:hover .tinyscroll-pane-slider {
+                opacity:1;
+            }
+            .tinyscroll {
+                width: 100%;height:100%;overflow: hidden;position: relative; 
+            }
+
+            .tinyscroll-content {
+                position:absolute;
+                padding:20px;/*这个用于客户设置*/
+                top:0;left:0;bottom:0;right:-17px;
+                overflow-x:hidden;
+                overflow-y:scroll;
+                /*-webkit-overflow-scrolling:touch;*/
+            }
+            .tinyscroll-content::-webkit-scrollbar {
+                //display:block;
+            }
+            .tinyscroll-pane {
+                position:absolute;
+                right:3px;
+                top:0;bottom:0;/*这样可以保证高度能继承父级的*/
+                background:rgba(0,0,0,0); /*.48*/
+                opacity:.7;
+                /*margin:5px 0;*/
+                width: 7px;
+                border-radius:3px;
+                transition:all .3s ease;
+            }
+            .tinyscroll-pane-slider {
+                position:relative;
+                width:100%;
+                height:60px;
+                background:#c2c2c2;
+                border-radius:3px;
+                transition: all .3s ease;
+                transform:translate3d(0,0 , 0);
+                opacity:0;
+            }
+            .tinyscroll-pane-slider.show {
+                opacity:1;
+            }
+            .tinyscroll-pane-slider:hover {
+                background:#CECECE;
+            }
+            
+            /*组件部分 结束*/
+        </style>
+    </head>
+    <body>
+        <div class="modal">
+            <div class="tinyscroll" data-name="tinyscroll">
+                <div class="tinyscroll-content">
+                    <div>HTML5提供了一些非常强大的JavaScript和HTML API，来帮助开发者构建精彩的桌面和移动应用程序。本文将介绍5个新型的API，希望对你的开发工作有所帮助。&nbsp;</div><div><br></div><div>1. &nbsp;全屏API（Fullscreen API）&nbsp;</div><div><br></div><div>该API允许开发者以编程方式将Web应用程序全屏运行，使Web应用程序更像本地应用程序。&nbsp;</div><div><br></div><div>Javascript代码&nbsp;</div><div>// 找到适合浏览器的全屏方法 &nbsp;</div><div>function launchFullScreen(element) { &nbsp;</div><div>&nbsp; if(element.requestFullScreen) { &nbsp;</div><div>&nbsp; &nbsp; element.requestFullScreen(); &nbsp;</div><div>&nbsp; } else if(element.mozRequestFullScreen) { &nbsp;</div><div>&nbsp; &nbsp; element.mozRequestFullScreen(); &nbsp;</div><div>&nbsp; } else if(element.webkitRequestFullScreen) { &nbsp;</div><div>&nbsp; &nbsp; element.webkitRequestFullScreen(); &nbsp;</div><div>&nbsp; } &nbsp;</div><div>} &nbsp;</div><div>&nbsp;&nbsp;</div><div>// 启动全屏模式 &nbsp;</div><div>launchFullScreen(document.documentElement); // the whole page &nbsp;</div><div>launchFullScreen(document.getElementById("videoElement")); // any individual element &nbsp;</div><div><span style="padding: 0px; margin: 0px; color: rgb(51, 51, 51); widows: 1; font-size: 14px; line-height: 25.1875px;"><span data-wiz-span="data-wiz-span" style="font-size: 12pt;">退出全屏&nbsp;</span></span><span style="color: rgb(51, 51, 51); font-size: 12.5px; line-height: 22.5px; widows: 1;"><span data-wiz-span="data-wiz-span" style="font-size: 12pt;">&nbsp;</span></span><br style="padding: 0px; margin: 0px; color: rgb(51, 51, 51); font-size: 12.5px; line-height: 22.5px; widows: 1;"><span style="padding: 0px; margin: 0px; color: rgb(51, 51, 51); widows: 1; font-size: 14px; line-height: 25.1875px;"><span data-wiz-span="data-wiz-span" style="font-size: 12pt;">&nbsp; document.cancelFullScreen()&nbsp;</span></span><span style="color: rgb(51, 51, 51); font-size: 12.5px; line-height: 22.5px; widows: 1;"><span data-wiz-span="data-wiz-span" style="font-size: 12pt;">&nbsp;</span></span><br></div><div><br></div><div>教程 / 演示&nbsp;</div><div><br></div><div>2. &nbsp;页面可见性API（Page Visibility API）&nbsp;</div><div><br></div><div>该API可以用来检测页面对于用户的可见性，即返回用户当前浏览的页面或标签的状态变化。&nbsp;</div><div><br></div><div>Javascript代码&nbsp;</div><div>// 设置隐藏属性和可见改变事件的名称，属性需要加浏览器前缀 &nbsp;</div><div>// since some browsers only offer vendor-prefixed support &nbsp;</div><div>var hidden, state, visibilityChange; &nbsp;&nbsp;</div><div>if (typeof document.hidden !== "undefined") { &nbsp;</div><div>&nbsp; hidden = "hidden"; &nbsp;</div><div>&nbsp; visibilityChange = "visibilitychange"; &nbsp;</div><div>&nbsp; state = "visibilityState"; &nbsp;</div><div>} else if (typeof document.mozHidden !== "undefined") { &nbsp;</div><div>&nbsp; hidden = "mozHidden"; &nbsp;</div><div>&nbsp; visibilityChange = "mozvisibilitychange"; &nbsp;</div><div>&nbsp; state = "mozVisibilityState"; &nbsp;</div><div>} else if (typeof document.msHidden !== "undefined") { &nbsp;</div><div>&nbsp; hidden = "msHidden"; &nbsp;</div><div>&nbsp; visibilityChange = "msvisibilitychange"; &nbsp;</div><div>&nbsp; state = "msVisibilityState"; &nbsp;</div><div>} else if (typeof document.webkitHidden !== "undefined") { &nbsp;</div><div>&nbsp; hidden = "webkitHidden"; &nbsp;</div><div>&nbsp; visibilityChange = "webkitvisibilitychange"; &nbsp;</div><div>&nbsp; state = "webkitVisibilityState"; &nbsp;</div><div>} &nbsp;</div><div>&nbsp;&nbsp;</div><div>// 添加一个标题改变的监听器 &nbsp;</div><div>document.addEventListener(visibilityChange, function(e) { &nbsp;</div><div>&nbsp; // 开始或停止状态处理 &nbsp;</div><div>}, false); &nbsp;</div><div><br></div><div>教程 / 演示&nbsp;</div><div><br></div><div>3. &nbsp;getUserMedia API&nbsp;</div><div><br></div><div>该API允许Web应用程序访问摄像头和麦克风，而无需使用插件。&nbsp;</div><div><br></div><div>Javascript代码&nbsp;</div><div>// 设置事件监听器 &nbsp;</div><div>window.addEventListener("DOMContentLoaded", function() { &nbsp;</div><div>&nbsp; // 获取元素 &nbsp;</div><div>&nbsp; var canvas = document.getElementById("canvas"), &nbsp;</div><div>&nbsp; &nbsp; context = canvas.getContext("2d"), &nbsp;</div><div>&nbsp; &nbsp; video = document.getElementById("video"), &nbsp;</div><div>&nbsp; &nbsp; videoObj = { "video": true }, &nbsp;</div><div>&nbsp; &nbsp; errBack = function(error) { &nbsp;</div><div>&nbsp; &nbsp; &nbsp; console.log("Video capture error: ", error.code); &nbsp;&nbsp;</div><div>&nbsp; &nbsp; }; &nbsp;</div><div>&nbsp;&nbsp;</div><div>&nbsp; // 设置video监听器 &nbsp;</div><div>&nbsp; if(navigator.getUserMedia) { // Standard &nbsp;</div><div>&nbsp; &nbsp; navigator.getUserMedia(videoObj, function(stream) { &nbsp;</div><div>&nbsp; &nbsp; &nbsp; video.src = stream; &nbsp;</div><div>&nbsp; &nbsp; &nbsp; video.play(); &nbsp;</div><div>&nbsp; &nbsp; }, errBack); &nbsp;</div><div>&nbsp; } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed &nbsp;</div><div>&nbsp; &nbsp; navigator.webkitGetUserMedia(videoObj, function(stream){ &nbsp;</div><div>&nbsp; &nbsp; &nbsp; video.src = window.webkitURL.createObjectURL(stream); &nbsp;</div><div id="hehehe">&nbsp; &nbsp; &nbsp; video.play(); &nbsp;</div><div>&nbsp; &nbsp; }, errBack); &nbsp;</div><div>&nbsp; } &nbsp;</div><div>}, false); &nbsp;</div><div><br></div><div>教程 / 演示&nbsp;</div><div><br></div><div>4. &nbsp;电池API（Battery API）&nbsp;</div><div><br></div><div>这是一个针对移动设备应用程序的API，主要用于检测设备电池信息。&nbsp;</div><div><br></div><div>Javascript代码&nbsp;</div><div>var battery = navigator.battery || navigator.webkitBattery || navigator.mozBattery; &nbsp;</div><div>&nbsp;&nbsp;</div><div>// 电池属性 &nbsp;</div><div>console.warn("Battery charging: ", battery.charging); // true &nbsp;</div><div>console.warn("Battery level: ", battery.level); // 0.58 &nbsp;</div><div>console.warn("Battery discharging time: ", battery.dischargingTime); &nbsp;</div><div>&nbsp;&nbsp;</div><div>// 添加事件监听器 &nbsp;</div><div>battery.addEventListener("chargingchange", function(e) { &nbsp;</div><div>&nbsp; console.warn("Battery charge change: ", battery.charging); &nbsp;</div><div>}, false); &nbsp;</div><div><br></div><div>教程&nbsp;</div><div><br></div><div>5. &nbsp;Link Prefetching&nbsp;</div><div><br></div><div>预加载网页内容，为浏览者提供一个平滑的浏览体验。&nbsp;</div><div><br></div><div>Html代码&nbsp;</div><div>&lt;!-- full page --&gt; &nbsp;</div><div>&lt;link rel="prefetch" href="http://davidwalsh.name/css-enhancements-user-experience" /&gt; &nbsp;</div><div>&nbsp;&nbsp;</div><div>&lt;!-- just an image --&gt; &nbsp;</div><div>&lt;link rel="prefetch" href="http://davidwalsh.name/wp-content/themes/walshbook3/images/sprite.png" /&gt;</div>
+                </div>
+                <!--<div class="tinyscroll-pane"><div class="tinyscroll-pane-slider"></div></div> -->
+            </div>
+        </div>
+        <script src="jquery.js"></script>
+       
+        <script src="tinyscroll.js"></script>
+        <script>
+            
+        </script>
+    </body>
+</html>
